@@ -14,11 +14,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
 @Table(name = "users")
 @Data
+@Builder
+@AllArgsConstructor
 public class User {
     
     @Id
@@ -42,4 +46,11 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<FavoriteChatRoom> favoriteChatRooms; // 즐겨찾기 목록
+    
+    // 회원가입
+    public User(UserRequest.RegisterDTO reqDTO) {
+    	this.username = reqDTO.getUsername();
+    	this.password = reqDTO.getPassword();
+    	this.email = reqDTO.getEmail();
+    }
 }

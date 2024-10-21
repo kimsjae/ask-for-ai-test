@@ -16,6 +16,9 @@ spring:
       ddl-auto: update # JPA에서 데이터베이스 테이블을 자동으로 생성하는 방식.
     show-sql: true # JPA가 실행하는 SQL 쿼리를 콘솔에 출력.
     open-in-view: false # JPA의 Lazy Loading을 비활성화하여 성능을 향상시킴.
+    properties:
+      hibernate:
+        format_sql: true # 출력되는 SQL쿼리를 읽기 쉽게 들여쓰기를 적용하여 출력.
 
 openai:
   api-key: YOUR_API_KEY_HERE # OpenAI API 호출에 필요한 키를 설정.
