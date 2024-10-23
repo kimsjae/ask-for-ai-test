@@ -49,11 +49,5 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<FavoriteChatRoom> favoriteChatRooms; // 즐겨찾기 목록
-    
-    // 회원가입
-    public User(UserRequest.RegisterDTO reqDTO) {
-    	this.username = reqDTO.getUsername();
-    	this.password = reqDTO.getPassword();
-    	this.email = reqDTO.getEmail();
-    }
+
 }

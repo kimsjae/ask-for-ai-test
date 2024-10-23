@@ -1,10 +1,11 @@
 package org.askforai.user;
 
-import java.util.Optional;
-
-import org.askforai._core.errors.exception.Exception401;
+import org.askforai._core.utils.JwtUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,42 +16,50 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 	
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
 	
 	// 회원가입
 	@Transactional
-	public User registerUser(UserRequest.RegisterDTO reqDTO) {
-		Optional<User> userOp = userRepository.findByUsername(reqDTO.getUsername());
-
-//		TODO
-//		if (userOp.isPresent()) {
-//			throw new Exception;
-//		}
+	public User signup(UserRequest.SignupDTO reqDTO) {
+		log.info("회원가입 시도: {}", reqDTO.getUsername());
+		if (userRepository.findByUsername(reqDTO.getUsername()).isPresent()) {
+			log.warn("회원가입 실패: 사용자 이름이 이미 존재합니다. {}", reqDTO.getUsername());
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자 이름이 이미 존재합니다.");
+		}
 		
-		User user = new User(reqDTO);
-		return userRepository.save(user);
+		User user = User.builder()
+				.username(reqDTO.getUsername())
+				.password(passwordEncoder.encode(reqDTO.getPassword()))
+				.email(reqDTO.getEmail())
+				.build();
+		
+		userRepository.save(user);
+		log.info("회원가입 성공: {}", reqDTO.getUsername());
+		
+		return user;
 	}
 	
 	// 로그인
-	public User login(UserRequest.LoginDTO reqDTO) {
-		log.info("로그인 시도: username = {}, password = {}", reqDTO.getUsername(), reqDTO.getPassword());
-		
-		Optional<User> userOp = userRepository.findByUsername(reqDTO.getUsername());
-		
-		if (userOp.isPresent()) {
-			User user = userOp.get();
-			if (user.getPassword().equals(reqDTO.getPassword())) {
-				log.info("로그인 성공!!!: username = {}, password = {}", reqDTO.getUsername(), reqDTO.getPassword());
-				return user;
-				
-			} else {
-				log.warn("로그인 실패!!!: 아이디 혹은 비밀번호가 틀렸습니다.");
-				throw new Exception401("아이디 또는 비밀번호가 틀렸습니다.");
-			}
-		} else {
-			log.warn("로그인 실패!!!: 아이디 혹은 비밀번호가 틀렸습니다.");
-			throw new Exception401("아이디 또는 비밀번호가 틀렸습니다.");
-		}
-	
+	public String signin(UserRequest.SigninDTO reqDTO) {
+	    log.info("로그인 시도: {}", reqDTO.getUsername());
+	    User user = userRepository.findByUsername(reqDTO.getUsername())
+	            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 사용자 이름 또는 비밀번호."));
+
+	    // JWT 생성 후 반환
+	    log.info("로그인 성공: {}", reqDTO.getUsername());
+	    return jwtUtil.generateToken(user.getUsername());
 	}
+	
+	// OAuth2 로그인
+    public String signin(UserRequest.OAuth2SigninDTO reqDTO) {
+        log.info("OAuth2 로그인 시도: {}", reqDTO.getUsername());
+        User user = userRepository.findByUsername(reqDTO.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "사용자가 존재하지 않습니다."));
+
+        // JWT 생성 후 반환
+        log.info("OAuth2 로그인 성공: {}", reqDTO.getUsername());
+        return jwtUtil.generateToken(user.getUsername());
+    }
 	
 }

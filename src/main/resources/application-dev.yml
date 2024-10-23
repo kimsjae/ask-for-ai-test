@@ -2,6 +2,23 @@ server:
   port: 8080 # 서버 포트 지정.
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 93862905288-mv2nvik4v8gdvdl4od1g6k8qrtau3gns.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+               - email
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
+            user-name-attribute: email
+
   datasource:
     url: jdbc:h2:mem:testdb # H2 인메모리 데이터베이스를 사용.
     driver-class-name: org.h2.Driver # 데이터베이스 드라이버 클래스를 지정.
