@@ -3,7 +3,6 @@ package org.askforai.message;
 import java.time.LocalDateTime;
 
 import org.askforai.chatRoom.ChatRoom;
-import org.askforai.user.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,13 +13,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "messages")
@@ -31,16 +28,15 @@ public class Message {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom; // 해당 메시지가 속한 채팅방
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user; // 메시지를 보낸 사용자
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
 
     @Column(nullable = false)
-    private String content; // 메시지 내용
+    private Sender sender;
 
     @Column(nullable = false)
-    private LocalDateTime timestamp; // 메시지 발송 시간
+    private String content;
+
+    private LocalDateTime timestamp;
+    
 }

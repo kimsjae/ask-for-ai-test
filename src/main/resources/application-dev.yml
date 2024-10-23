@@ -1,5 +1,9 @@
 server:
-  port: 8080 # 서버 포트 지정.
+  servlet:
+    encoding:
+      charset: utf-8 # 한글.
+      force: true
+  port: 8080
 
 spring:
   security:

@@ -34,6 +34,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // CSRF 비활성화
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/signup", "/signin").permitAll() // 회원가입과 로그인은 인증 없이 접근 가능
+                .requestMatchers("/", "/h2-console", "/h2-console/**").permitAll()
                 .anyRequest().authenticated() // 나머지 요청은 인증 필요
             )
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
