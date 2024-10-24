@@ -21,8 +21,8 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	
 	@Transactional
-	public String signup(AuthRequest.SignupDTO reqDTO) {
-		log.info("회원가입 시도: {}", reqDTO.getUsername());
+	public User signup(AuthRequest.SignupDTO reqDTO) {
+		log.info("회원가입 시도: {}", reqDTO);
 		
 		Optional<User> userOp = authRepository.findByUsername(reqDTO.getUsername());
 		if (userOp.isPresent()) {
@@ -39,8 +39,23 @@ public class AuthService {
 		
 		authRepository.save(user);
 		
+		log.info("회원가입 성공: {}", user);
+		
+		return user;
+	}
+	
+	public String signin(AuthRequest.SigninDTO reqDTO) {
+		log.info("로그인 시도: {}", reqDTO);
+		
+		User user = authRepository.findByUsername(reqDTO.getUsername())
+			    .orElseThrow(() -> new IllegalArgumentException("username 혹은 password가 일치하지 않습니다."));
+
+		if (!passwordEncoder.matches(reqDTO.getPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("username 혹은 password가 일치하지 않습니다.");
+		}
+		
 		String token = jwtUtil.generateToken(user.getUsername());
-		log.info("회원가입 성공: {}, jwt 토큰 생성 완료.", user);
+		log.info("로그인 성공: {}, jwt토큰 생성 완료", user);
 		
 		return token;
 	}

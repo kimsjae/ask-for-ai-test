@@ -23,7 +23,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/signup").permitAll()
-                .requestMatchers("/auth/signip").permitAll()
+                .requestMatchers("/auth/signin").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/h2-console").permitAll()
                 .anyRequest().authenticated() // 인증이 필요한 요청

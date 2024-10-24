@@ -1,5 +1,6 @@
 package org.askforai.auth;
 
+import org.askforai.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +20,19 @@ public class AuthController {
 	// 회원가입 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@Valid @RequestBody AuthRequest.SignupDTO reqDTO) {
+		User user = authService.signup(reqDTO);
 		
-		String token = authService.signup(reqDTO);
-		
-		return ResponseEntity.ok(token);
+		return ResponseEntity.ok(user);
 	}
 	
 	
-	// 로그인 @PostMapping("/signin")
-	
+	// 로그인
+	@PostMapping("/signin")
+	public ResponseEntity<?> signin(@Valid @RequestBody AuthRequest.SigninDTO reqDTO) {
+		String token = authService.signin(reqDTO);
+		
+		return ResponseEntity.ok(token);
+	}
 	
 	
 	// 회원탈퇴 @DeleteMapping("/withdrawal")

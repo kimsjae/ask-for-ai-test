@@ -27,5 +27,18 @@ public class AuthRequest {
 	    @Size(min = 4, max = 12)
 	    private String email;
 	}
+	
+	@Data
+	public static class SigninDTO {
+		
+		@NotBlank(message = "username은 최소 4자리, 최대 12자리입니다.")
+	    @Size(min = 4, max = 12)
+	    private String username;
+
+	    @NotBlank(message = "password는 최소 4자리, 최대 12자리입니다.")
+	    @Size(min = 4, max = 12)
+	    private String password;
+		
+	}
 
 }
